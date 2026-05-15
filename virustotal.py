@@ -3,7 +3,9 @@ import base64
 import time
 
 
-API_KEY = "d0584a6660da67ee5be2eebe81e2fff62ac9e7ef6b4522b7b198773bf1816e65"
+API_KEY = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+#GET YOUR API KEY FROM VIRUSTOTAL
 
 
 def scan_url_virustotal(url):
