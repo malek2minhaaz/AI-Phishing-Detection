@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Cyber Threat Dashboard
+    </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+        body{
+            margin:0;
+            padding:0;
+            background:#050505;
+            color:white;
+            font-family:'Segoe UI',sans-serif;
+            overflow-x:hidden;
+        }
+
+        .bg-effect{
+            position:fixed;
+            width:100%;
+            height:100%;
+            background:
+            radial-gradient(circle at top left,#00ff8840,transparent 30%),
+            radial-gradient(circle at bottom right,#00ff8840,transparent 30%);
+            z-index:-1;
+        }
+
+        .navbar-custom{
+            background:#0b0f0b;
+            border-bottom:1px solid #00ff88;
+            padding:18px 40px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .logo{
+            color:#00ff88;
+            font-size:28px;
+            font-weight:bold;
+            letter-spacing:1px;
+        }
+
+        .status{
+            color:#00ff88;
+            border:1px solid #00ff88;
+            padding:10px 18px;
+            border-radius:30px;
+            font-size:14px;
+        }
+
+        .container-main{
+            width:92%;
+            max-width:1400px;
+            margin:auto;
+            margin-top:40px;
+        }
+
+        /* STATS */
+
+        .stats-card{
+            background:#0d1110;
+            border:1px solid #1f2b25;
+            border-radius:25px;
+            padding:30px;
+            text-align:center;
+            transition:0.3s;
+            box-shadow:0 0 20px rgba(0,255,136,0.05);
+        }
+
+        .stats-card:hover{
+            transform:translateY(-5px);
+            box-shadow:0 0 30px rgba(0,255,136,0.15);
+        }
+
+        .stats-title{
+            color:#9ca3af;
+            font-size:18px;
+        }
+
+        .stats-number{
+            font-size:42px;
+            font-weight:bold;
+            margin-top:15px;
+        }
+
+        .green{
+            color:#00ff88;
+        }
+
+        .red{
+            color:#ff4d4d;
+        }
+
+        .yellow{
+            color:#facc15;
+        }
+
+        .blue{
+            color:#38bdf8;
+        }
+
+        /* CHART */
+
+        .chart-box{
+            background:#0d1110;
+            border:1px solid #1f2b25;
+            border-radius:25px;
+            padding:35px;
+            margin-top:40px;
+            box-shadow:0 0 20px rgba(0,255,136,0.05);
+
+            width:550px;
+            height:520px;
+
+            margin-left:auto;
+            margin-right:auto;
+
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+        }
+
+        .section-title{
+            color:#00ff88;
+            font-size:24px;
+            font-weight:bold;
+            margin-bottom:25px;
+            text-align:center;
+        }
+
+        /* TABLE */
+
+        .table-box{
+            background:#0d1110;
+            border:1px solid #1f2b25;
+            border-radius:25px;
+            padding:35px;
+            margin-top:40px;
+            box-shadow:0 0 20px rgba(0,255,136,0.05);
+        }
+
+        .table{
+            color:white !important;
+        }
+
+        th{
+            color:#00ff88 !important;
+            border-color:#1f2b25 !important;
+        }
+
+        td{
+            border-color:#1f2b25 !important;
+            vertical-align:middle;
+        }
+
+        /* BADGES */
+
+        .badge-safe{
+            background:#065f46;
+            color:#00ff88;
+            padding:10px 16px;
+            border-radius:12px;
+            font-weight:bold;
+        }
+
+        .badge-suspicious{
+            background:#78350f;
+            color:#facc15;
+            padding:10px 16px;
+            border-radius:12px;
+            font-weight:bold;
+        }
+
+        .badge-phishing{
+            background:#7f1d1d;
+            color:#ff4d4d;
+            padding:10px 16px;
+            border-radius:12px;
+            font-weight:bold;
+        }
+
+        .footer{
+            text-align:center;
+            color:#9ca3af;
+            margin-top:50px;
+            margin-bottom:25px;
+        }
+
+        .url-cell{
+            max-width:350px;
+            word-wrap:break-word;
+        }
+
+        @media(max-width:768px){
+
+            .chart-box{
+                width:100%;
+                height:500px;
+            }
+
+            .navbar-custom{
+                padding:18px 20px;
+            }
+
+            .logo{
+                font-size:22px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="bg-effect"></div>
+
+<!-- NAVBAR -->
+
+<div class="navbar-custom">
+
+    <div class="logo">
+
+        CYBER AI DEFENDER
+
+    </div>
+
+    <div class="status">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        Threat Monitoring Active
+
+    </div>
+
+</div>
+
+<div class="container-main">
+
+    <!-- STATS -->
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+
+            <div class="stats-card">
+
+                <div class="stats-title">
+                    Total Scans
+                </div>
+
+                <div class="stats-number blue">
+
+                    {{ total_scans }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stats-card">
+
+                <div class="stats-title">
+                    Phishing URLs
+                </div>
+
+                <div class="stats-number red">
+
+                    {{ phishing_count }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stats-card">
+
+                <div class="stats-title">
+                    Suspicious URLs
+                </div>
+
+                <div class="stats-number yellow">
+
+                    {{ suspicious_count }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stats-card">
+
+                <div class="stats-title">
+                    Safe URLs
+                </div>
+
+                <div class="stats-number green">
+
+                    {{ safe_count }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CHART -->
+
+    <div class="chart-box">
+
+        <div class="section-title">
+
+            <i class="fa-solid fa-chart-pie"></i>
+
+            Threat Analytics
+
+        </div>
+
+        <canvas id="threatChart"></canvas>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <div class="section-title">
+
+            <i class="fa-solid fa-database"></i>
+
+            Threat Scan History
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-dark table-hover table-bordered">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            URL
+                        </th>
+
+                        <th>
+                            Verdict
+                        </th>
+
+                        <th>
+                            Risk
+                        </th>
+
+                        <th>
+                            Score
+                        </th>
+
+                        <th>
+                            Scan Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for scan in scans %}
+
+                    <tr>
+
+                        <td class="url-cell">
+
+                            {{ scan[1][:60] }}
+
+                            {% if scan[1]|length > 60 %}
+
+                                ...
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if scan[2] == "SAFE" %}
+
+                                <span class="badge-safe">
+
+                                    SAFE
+
+                                </span>
+
+                            {% elif scan[2] == "SUSPICIOUS" %}
+
+                                <span class="badge-suspicious">
+
+                                    SUSPICIOUS
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge-phishing">
+
+                                    PHISHING
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {{ scan[3] }}
+
+                        </td>
+
+                        <td>
+
+                            {{ scan[4] }}/100
+
+                        </td>
+
+                        <td>
+
+                            {{ scan[5] }}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        AI-Powered Phishing Detection & Threat Intelligence Platform
+
+    </div>
+
+</div>
+
+<!-- CHART -->
+
+<script>
+
+const ctx = document.getElementById('threatChart');
+
+new Chart(ctx, {
+
+    type: 'doughnut',
+
+    data: {
+
+        labels: [
+
+            'Phishing',
+
+            'Suspicious',
+
+            'Safe'
+
+        ],
+
+        datasets: [{
+
+            data: [
+
+                {{ phishing_count }},
+
+                {{ suspicious_count }},
+
+                {{ safe_count }}
+
+            ],
+
+            backgroundColor: [
+
+                '#ef4444',
+
+                '#facc15',
+
+                '#00ff88'
+
+            ],
+
+            borderWidth: 0
+
+        }]
+
+    },
+
+    options: {
+
+        responsive:true,
+
+        maintainAspectRatio:false,
+
+        plugins: {
+
+            legend: {
+
+                labels: {
+
+                    color:'white',
+
+                    font:{
+
+                        size:14
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
+

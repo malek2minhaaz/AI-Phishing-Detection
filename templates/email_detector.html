@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Phishing Detection — Cyber AI Defender</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#00ff88;--green-dim:#00c96a;--green-glow:rgba(0,255,136,0.12);
+  --bg:#060908;--surface:#0c110e;--surface2:#111917;--border:#1c2820;
+  --text:#e2e8e4;--muted:#6b7c74;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,136,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,0.03) 1px,transparent 1px);background-size:40px 40px;z-index:0;pointer-events:none}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(0,255,136,0.06),transparent);z-index:0;pointer-events:none}
+
+nav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:18px 48px;background:rgba(6,9,8,0.9);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.logo{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;color:var(--green);letter-spacing:2px}
+.logo span{color:var(--text);opacity:0.5}
+.nav-link{color:var(--muted);font-size:14px;text-decoration:none;padding:8px 16px;border-radius:8px;transition:0.2s}
+.nav-link:hover{color:var(--green);background:var(--green-glow)}
+
+.hero{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;padding:60px 20px;min-height:calc(100vh - 69px)}
+.card{width:100%;max-width:700px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px;box-shadow:0 0 60px rgba(0,255,136,0.05)}
+.tag{display:inline-flex;align-items:center;gap:8px;background:var(--green-glow);border:1px solid rgba(0,255,136,0.25);color:var(--green);font-size:12px;font-family:'Space Mono',monospace;padding:6px 14px;border-radius:20px;margin-bottom:28px}
+h1{font-size:36px;font-weight:600;line-height:1.2;margin-bottom:12px;letter-spacing:-0.5px}
+h1 em{color:var(--green);font-style:normal}
+.subtitle{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:32px}
+
+.email-area{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  color:var(--text);border-radius:16px;padding:18px 20px;
+  font-size:14px;font-family:'Inter',sans-serif;resize:vertical;outline:none;
+  line-height:1.7;transition:0.2s;min-height:200px;
+}
+.email-area:focus{border-color:rgba(0,255,136,0.4);box-shadow:0 0 0 3px rgba(0,255,136,0.07)}
+.email-area::placeholder{color:var(--muted)}
+
+.char-count{font-size:12px;color:var(--muted);text-align:right;margin-top:8px;margin-bottom:20px}
+
+.btn-analyze{
+  width:100%;background:var(--green);color:#060908;border:none;border-radius:14px;
+  padding:16px;font-size:16px;font-weight:600;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:0.2s;margin-bottom:12px;
+}
+.btn-analyze:hover{background:var(--green-dim);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,255,136,0.2)}
+.btn-back{
+  width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);
+  border-radius:14px;padding:14px;font-size:14px;cursor:pointer;
+  font-family:'Inter',sans-serif;text-decoration:none;display:block;text-align:center;transition:0.2s;
+}
+.btn-back:hover{border-color:rgba(0,255,136,0.3);color:var(--green)}
+
+.tips{
+  margin-top:28px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:14px;padding:18px 20px;
+}
+.tips-title{font-size:13px;color:var(--green);font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.tip{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.tip i{color:var(--green);margin-top:2px;flex-shrink:0;font-size:11px}
+
+@media(max-width:640px){.card{padding:28px 20px}h1{font-size:26px}nav{padding:16px 20px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">CYBER<span>/</span>AI</div>
+  <div class="d-flex gap-2">
+    <a href="/" class="nav-link"><i class="fa-solid fa-link"></i> URL Scan</a>
+    <a href="/dashboard" class="nav-link"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+    <a href="/history" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="card">
+
+    <div class="tag"><i class="fa-solid fa-envelope-open-text"></i> Email Threat Analysis</div>
+
+    <h1>Analyze <em>Email</em><br>for Phishing</h1>
+    <p class="subtitle">Paste the full email content below. Our AI will analyze keywords, urgency patterns, links, and social engineering tactics.</p>
+
+    <form action="/analyze-email" method="POST">
+      <textarea name="email_text" class="email-area" rows="10"
+        placeholder="Paste the email content here...&#10;&#10;Example:&#10;Dear Customer, Your account has been suspended. Click here to verify your identity immediately: http://suspicious-link.xyz/login"
+        required oninput="updateCount(this)"></textarea>
+
+      <div class="char-count" id="char-count">0 characters</div>
+
+      <button type="submit" class="btn-analyze">
+        <i class="fa-solid fa-magnifying-glass"></i>&nbsp; Analyze Email Threat
+      </button>
+    </form>
+
+    <a href="/" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to URL Scanner</a>
+
+    <div class="tips">
+      <div class="tips-title"><i class="fa-solid fa-lightbulb"></i> What we detect</div>
+      <div class="tip"><i class="fa-solid fa-circle-dot"></i> Phishing keywords: "verify", "suspended", "urgent", "click here"</div>
+      <div class="tip"><i class="fa-solid fa-circle-dot"></i> Urgency manipulation and social engineering tactics</div>
+      <div class="tip"><i class="fa-solid fa-circle-dot"></i> Suspicious URLs and multiple link patterns</div>
+      <div class="tip"><i class="fa-solid fa-circle-dot"></i> Requests for sensitive personal information (SSN, card numbers)</div>
+      <div class="tip"><i class="fa-solid fa-circle-dot"></i> AI-powered dynamic threat intelligence via Claude</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function updateCount(el){
+  document.getElementById('char-count').textContent = el.value.length.toLocaleString() + ' characters';
+}
+</script>
+</body>
+</html>

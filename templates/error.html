@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error — Cyber AI Defender</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500&display=swap');
+*{box-sizing:border-box}
+:root{--green:#00ff88;--bg:#060908;--surface:#0c110e;--border:#1c2820;--text:#e2e8e4;--muted:#6b7c74}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px;max-width:500px;width:90%;text-align:center}
+.icon{font-size:48px;color:#ff6b6b;margin-bottom:20px}
+h1{font-size:24px;font-weight:600;margin-bottom:12px}
+p{color:var(--muted);line-height:1.7;margin-bottom:28px}
+.error-box{background:#0f0a0a;border:1px solid rgba(220,38,38,0.25);border-radius:12px;padding:14px 18px;font-family:'Space Mono',monospace;font-size:12px;color:#ff8080;text-align:left;margin-bottom:28px;word-break:break-all}
+a{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#060908;border-radius:12px;padding:13px 24px;font-weight:600;text-decoration:none;transition:0.2s}
+a:hover{background:#00cc6a}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+  <h1>Analysis Error</h1>
+  <p>Something went wrong during the scan. This may be a network issue or invalid input.</p>
+  {% if error %}
+  <div class="error-box">{{ error }}</div>
+  {% endif %}
+  <a href="/"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+</div>
+</body>
+</html>
