@@ -72,8 +72,6 @@
             margin-top:40px;
         }
 
-        /* STATS */
-
         .stats-card{
             background:#0d1110;
             border:1px solid #1f2b25;
@@ -116,8 +114,6 @@
             color:#38bdf8;
         }
 
-        /* CHART */
-
         .chart-box{
             background:#0d1110;
             border:1px solid #1f2b25;
@@ -145,8 +141,6 @@
             text-align:center;
         }
 
-        /* TABLE */
-
         .table-box{
             background:#0d1110;
             border:1px solid #1f2b25;
@@ -169,8 +163,6 @@
             border-color:#1f2b25 !important;
             vertical-align:middle;
         }
-
-        /* BADGES */
 
         .badge-safe{
             background:#065f46;
@@ -233,8 +225,6 @@
 
 <div class="bg-effect"></div>
 
-<!-- NAVBAR -->
-
 <div class="navbar-custom">
 
     <div class="logo">
@@ -254,8 +244,6 @@
 </div>
 
 <div class="container-main">
-
-    <!-- STATS -->
 
     <div class="row g-4">
 
@@ -333,8 +321,6 @@
 
     </div>
 
-    <!-- CHART -->
-
     <div class="chart-box">
 
         <div class="section-title">
@@ -348,8 +334,6 @@
         <canvas id="threatChart"></canvas>
 
     </div>
-
-    <!-- TABLE -->
 
     <div class="table-box">
 
@@ -369,25 +353,11 @@
 
                     <tr>
 
-                        <th>
-                            URL
-                        </th>
-
-                        <th>
-                            Verdict
-                        </th>
-
-                        <th>
-                            Risk
-                        </th>
-
-                        <th>
-                            Score
-                        </th>
-
-                        <th>
-                            Scan Date
-                        </th>
+                        <th>URL</th>
+                        <th>Verdict</th>
+                        <th>Risk</th>
+                        <th>Score</th>
+                        <th>Scan Date</th>
 
                     </tr>
 
@@ -401,40 +371,32 @@
 
                         <td class="url-cell">
 
-                            {{ scan[1][:60] }}
+                            {{ scan['url'][:60] }}
 
-                            {% if scan[1]|length > 60 %}
-
+                            {% if scan['url']|length > 60 %}
                                 ...
-
                             {% endif %}
 
                         </td>
 
                         <td>
 
-                            {% if scan[2] == "SAFE" %}
+                            {% if scan['verdict'] == "SAFE" %}
 
                                 <span class="badge-safe">
-
                                     SAFE
-
                                 </span>
 
-                            {% elif scan[2] == "SUSPICIOUS" %}
+                            {% elif scan['verdict'] == "SUSPICIOUS" %}
 
                                 <span class="badge-suspicious">
-
                                     SUSPICIOUS
-
                                 </span>
 
                             {% else %}
 
                                 <span class="badge-phishing">
-
                                     PHISHING
-
                                 </span>
 
                             {% endif %}
@@ -443,19 +405,19 @@
 
                         <td>
 
-                            {{ scan[3] }}
+                            {{ scan['risk'] }}
 
                         </td>
 
                         <td>
 
-                            {{ scan[4] }}/100
+                            {{ scan['score'] }}/100
 
                         </td>
 
                         <td>
 
-                            {{ scan[5] }}
+                            {{ scan['scan_date'] }}
 
                         </td>
 
@@ -471,8 +433,6 @@
 
     </div>
 
-    <!-- FOOTER -->
-
     <div class="footer">
 
         AI-Powered Phishing Detection & Threat Intelligence Platform
@@ -480,8 +440,6 @@
     </div>
 
 </div>
-
-<!-- CHART -->
 
 <script>
 
@@ -496,9 +454,7 @@ new Chart(ctx, {
         labels: [
 
             'Phishing',
-
             'Suspicious',
-
             'Safe'
 
         ],
@@ -508,9 +464,7 @@ new Chart(ctx, {
             data: [
 
                 {{ phishing_count }},
-
                 {{ suspicious_count }},
-
                 {{ safe_count }}
 
             ],
@@ -518,9 +472,7 @@ new Chart(ctx, {
             backgroundColor: [
 
                 '#ef4444',
-
                 '#facc15',
-
                 '#00ff88'
 
             ],
@@ -546,9 +498,7 @@ new Chart(ctx, {
                     color:'white',
 
                     font:{
-
                         size:14
-
                     }
 
                 }
@@ -566,4 +516,3 @@ new Chart(ctx, {
 </body>
 
 </html>
-
