@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 
 # =========================
-# DATABASE SETUP
+# DATABASE INITIALIZATION
 # =========================
 
 def init_db():
@@ -39,7 +39,7 @@ def init_db():
     conn.close()
 
 
-# Initialize database automatically
+# Initialize database
 init_db()
 
 
@@ -62,77 +62,89 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    url = request.form.get("url")
-
-    if not url:
-
-        return render_template(
-            "result.html",
-            error="No URL provided"
-        )
-
-    # AI PHISHING DETECTION
-    result = detect_phishing(url)
-
-    # VIRUSTOTAL ANALYSIS
     try:
 
-        vt_result = scan_url_virustotal(url)
+        url = request.form.get("url")
 
-    except Exception as e:
+        if not url:
 
-        vt_result = {
-            "status": "Unable to fetch VirusTotal data",
-            "error": str(e)
-        }
+            return render_template(
 
-    # SAVE HISTORY
-    try:
+                "result.html",
 
-        conn = sqlite3.connect("phishing.db")
-
-        cursor = conn.cursor()
-
-        cursor.execute("""
-
-            INSERT INTO scan_history(
-
-                url,
-                verdict,
-                risk,
-                score,
-                scan_date
+                error="No URL Provided"
 
             )
 
-            VALUES(?,?,?,?,?)
+        # AI PHISHING DETECTION
+        result = detect_phishing(url)
 
-        """, (
+        # VIRUSTOTAL ANALYSIS
+        try:
 
-            url,
-            result["verdict"],
-            result["risk"],
-            result["score"],
-            str(datetime.now())
+            vt_result = scan_url_virustotal(url)
 
-        ))
+        except Exception as e:
 
-        conn.commit()
-        conn.close()
+            vt_result = {
+
+                "status": "error",
+                "message": "Unable to fetch VirusTotal data",
+                "error": str(e)
+
+            }
+
+        # SAVE SCAN HISTORY
+        try:
+
+            conn = sqlite3.connect("phishing.db")
+
+            cursor = conn.cursor()
+
+            cursor.execute("""
+
+                INSERT INTO scan_history(
+
+                    url,
+                    verdict,
+                    risk,
+                    score,
+                    scan_date
+
+                )
+
+                VALUES(?,?,?,?,?)
+
+            """, (
+
+                url,
+                result["verdict"],
+                result["risk"],
+                result["score"],
+                str(datetime.now())
+
+            ))
+
+            conn.commit()
+            conn.close()
+
+        except Exception as db_error:
+
+            print("Database Error:", db_error)
+
+        return render_template(
+
+            "result.html",
+
+            url=url,
+            result=result,
+            vt_result=vt_result
+
+        )
 
     except Exception as e:
 
-        print("Database Error:", e)
-
-    return render_template(
-
-        "result.html",
-
-        url=url,
-        result=result,
-        vt_result=vt_result
-
-    )
+        return f"Analyze Error: {str(e)}"
 
 
 # =========================
@@ -142,87 +154,68 @@ def analyze():
 @app.route("/dashboard")
 def dashboard():
 
-    conn = sqlite3.connect("phishing.db")
+    try:
 
-    cursor = conn.cursor()
+        conn = sqlite3.connect("phishing.db")
 
-    # GET ALL SCANS
-    cursor.execute("""
+        cursor = conn.cursor()
 
-        SELECT id, url, verdict, risk, score, scan_date
-        FROM scan_history
-        ORDER BY id DESC
+        cursor.execute("""
 
-    """)
+            SELECT id, url, verdict, risk, score, scan_date
+            FROM scan_history
+            ORDER BY id DESC
 
-    rows = cursor.fetchall()
+        """)
 
-    # CONVERT TUPLES TO DICTIONARY
-    scans = []
+        rows = cursor.fetchall()
 
-    for row in rows:
+        scans = []
 
-        scans.append({
+        for row in rows:
 
-            "id": row[0],
-            "url": row[1],
-            "verdict": row[2],
-            "risk": row[3],
-            "score": row[4],
-            "scan_date": row[5]
+            scans.append({
 
-        })
+                "id": row[0],
+                "url": row[1],
+                "verdict": row[2],
+                "risk": row[3],
+                "score": row[4],
+                "scan_date": row[5]
 
-    # TOTAL SCANS
-    cursor.execute("SELECT COUNT(*) FROM scan_history")
-    total_scans = cursor.fetchone()[0]
+            })
 
-    # PHISHING
-    cursor.execute("""
+        total_scans = len(scans)
 
-        SELECT COUNT(*)
-        FROM scan_history
-        WHERE verdict='PHISHING'
+        phishing_count = len([
+            s for s in scans if s["verdict"] == "PHISHING"
+        ])
 
-    """)
+        safe_count = len([
+            s for s in scans if s["verdict"] == "SAFE"
+        ])
 
-    phishing_count = cursor.fetchone()[0]
+        suspicious_count = len([
+            s for s in scans if s["verdict"] == "SUSPICIOUS"
+        ])
 
-    # SAFE
-    cursor.execute("""
+        conn.close()
 
-        SELECT COUNT(*)
-        FROM scan_history
-        WHERE verdict='SAFE'
+        return render_template(
 
-    """)
+            "dashboard.html",
 
-    safe_count = cursor.fetchone()[0]
+            scans=scans,
+            total_scans=total_scans,
+            phishing_count=phishing_count,
+            safe_count=safe_count,
+            suspicious_count=suspicious_count
 
-    # SUSPICIOUS
-    cursor.execute("""
+        )
 
-        SELECT COUNT(*)
-        FROM scan_history
-        WHERE verdict='SUSPICIOUS'
+    except Exception as e:
 
-    """)
-
-    suspicious_count = cursor.fetchone()[0]
-
-    conn.close()
-
-    return render_template(
-
-        "dashboard.html",
-
-        scans=scans,
-        total_scans=total_scans,
-        phishing_count=phishing_count,
-        safe_count=safe_count,
-        suspicious_count=suspicious_count
-
-    )
+        return f"Dashboard Error: {str(e)}"
 
 
 # =========================
@@ -244,18 +237,24 @@ def email_detector():
 @app.route("/analyze-email", methods=["POST"])
 def analyze_email():
 
-    email_text = request.form.get("email_text")
+    try:
 
-    result = detect_email_phishing(email_text)
+        email_text = request.form.get("email_text")
 
-    return render_template(
+        result = detect_email_phishing(email_text)
 
-        "email_result.html",
+        return render_template(
 
-        email_text=email_text,
-        result=result
+            "email_result.html",
 
-    )
+            email_text=email_text,
+            result=result
+
+        )
+
+    except Exception as e:
+
+        return f"Email Analysis Error: {str(e)}"
 
 
 # =========================
@@ -265,7 +264,7 @@ def analyze_email():
 @app.route("/health")
 def health():
 
-    return "App is running successfully!"
+    return "AI Phishing Detection System Running Successfully!"
 
 
 # =========================
